@@ -43,7 +43,7 @@ values."
      emacs-lisp
      git
      markdown
-     ;; org
+     org
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -310,6 +310,17 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  (setq org-src-lang-modes nil)
+  (bind-key "s-`" 'other-window)
+  (setq delete-by-moving-to-trash t)
+  (setq org-special-ctrl-a/e t)
+  (setq org-special-ctrl-k t)
+  (bind-key "<s-return>" 'toggle-frame-fullscreen)
+  (setq org-agenda-files '("/Users/shiyuanguo/Library/Mobile Documents/com~apple~CloudDocs/agenda"
+                           "/Users/shiyuanguo/Library/Mobile Documents/com~apple~CloudDocs/integratedLearning"
+                           "/Users/shiyuanguo/Library/Mobile Documents/com~apple~CloudDocs/integratedLearning/bioconductor"))
+
   (global-set-key (kbd "S-<f10>")
                   (lambda ()
                     (interactive)
@@ -338,8 +349,46 @@ you should place your code here."
                   (lambda ()
                     (interactive)
                     (find-file "/Users/shiyuanguo/Dropbox/org_files/org_life/voca.org")))
-  )
 
+
+
+  ;; (add-to-list 'org-structure-template-alist
+  ;;              '("r" "#+BEGIN_SRC R :results output \n?\n#+END_SRC"))
+
+  ;; (add-to-list 'org-structure-template-alist
+  ;;              '("R" "#+BEGIN_SRC R :results output graphics :file ./test.png :exports results \n?\n#+END_SRC"))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((calc . t)
+     (latex . t)
+     (shell . t)
+     (R . t)
+     (emacs-lisp . t)
+     (python . t)
+     (ditaa . t)
+     ))
+
+  (add-to-list 'org-src-lang-modes (quote ("shell" . shell-mode)))
+  (add-to-list 'org-src-lang-modes (quote ("elisp" . emacs-lisp)))
+  (add-to-list 'org-src-lang-modes (quote ("emacs-lisp" . emacs-lisp)))
+  (add-to-list 'org-src-lang-modes (quote ("R" . r)))
+  ;;(add-to-list 'org-src-lang-modes (quote ("screen" . shell-script)))
+  (add-to-list 'org-src-lang-modes (quote ("python" . python)))
+  (add-to-list 'org-src-lang-modes (quote ("ditaa" . ditaa)))
+  ;; (add-to-list 'org-src-lang-modes (quote ("Graphviz" . Graphviz)))
+  ;; disable confirmation
+  (defun odin/org-confirm-babel-evaluate (lang body)
+    (not (or (string= lang "latex") (string= lang "R") (string= lang "python") (string= lang "shell") (string= lang "emacs-lisp"))))
+  (setq org-confirm-babel-evaluate 'odin/org-confirm-babel-evaluate)
+
+  (setq org-capture-templates
+        (quote (("t" "TODO_item_list" entry (file+datetree "~/Dropbox/org_files/TODO.org") "* TODO %^{Description} %^g\n  :LOGBOOK:\n  - State \"TODO\"       from              %T\n  :END:\n%?")
+                ("r" "NO_action" entry (file+datetree "~/Dropbox/org_files/TODO.org") "* %^{Description} %^g\n%?")
+                ("d" "bug_debug" entry (file+olp "~/Dropbox/org_files/tech.org" "bugs and debugs") "** TODO %^{Description} %^g\n%?")
+                ("f" "config_improvement" entry (file+olp "~/.emacs.d/config.org" "future improvement") "** TODO %^{Description} \n  :LOGBOOK:\n  - State \"TODO\"       from              %T\n  :END:\n%?")
+                ("j" "Journal_entry" entry (file+datetree "~/Dropbox/org_files/杂记.org" ) "* %?" :unnarrowed t)
+                )))
+  )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
@@ -349,7 +398,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (smeargle orgit mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit git-commit with-editor transient ess-smart-equals ess-R-data-view ctable ess julia-mode company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy))))
+    (org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot smeargle orgit mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit git-commit with-editor transient ess-smart-equals ess-R-data-view ctable ess julia-mode company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
